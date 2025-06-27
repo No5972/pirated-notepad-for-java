@@ -667,7 +667,7 @@ public class Notepad extends JFrame {
         if (isModified) {
             int result = JOptionPane.showConfirmDialog(this, "你想将更改保存到 " + getTitle().substring(1, getTitle().indexOf(" - 记事本")) + " 吗？", "记事本", JOptionPane.YES_NO_CANCEL_OPTION);
             if (result == JOptionPane.YES_OPTION) {
-                saveFile();
+                if (!saveFile()) return;
             } else if (result == JOptionPane.CANCEL_OPTION) {
                 return;
             }
@@ -707,7 +707,7 @@ public class Notepad extends JFrame {
         if (isModified) {
             int result = JOptionPane.showConfirmDialog(this, "你想将更改保存到 " + getTitle().substring(1, getTitle().indexOf(" - 记事本")) + " 吗？", "记事本", JOptionPane.YES_NO_CANCEL_OPTION);
             if (result == JOptionPane.YES_OPTION) {
-                saveFile();
+                if (!saveFile()) return;
             } else if (result == JOptionPane.CANCEL_OPTION) {
                 return;
             }

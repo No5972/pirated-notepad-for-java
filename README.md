@@ -1,5 +1,5 @@
 # Pirated Notepad for Java
-用 Java 编写仿 Windows 中的记事本 大作业，单 java 源码文件 / Implementing a Notepad imitation of Windows using Java for course designs, with one single .java source file
+用 Java 编写仿 Windows 中的记事本 大作业，单 java 源码文件 / Implementing a Notepad imitation of Windows using Java for practicums, with one single .java source file
 
 # 使用方法
 1. 准备一个不低于 Java 8 的 JDK

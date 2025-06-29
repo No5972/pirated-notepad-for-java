@@ -372,7 +372,7 @@ public class Notepad extends JFrame {
         statusBarContainer.add(caretPositionLabel, gbcStatusBar);
         gbcStatusBar.gridx = 2; gbcStatusBar.gridy = 0; gbcStatusBar.weightx = 0.1;
         gbcStatusBar.anchor = GridBagConstraints.EAST;
-        JLabel resizeMark = new JLabel("⣠");
+        JLabel resizeMark = new JLabel("\u28E0"); // 使用Unicode转义序列表示
         resizeMark.setForeground(Color.GRAY);
         statusBarContainer.add(resizeMark, gbcStatusBar);
         add(statusBarContainer, BorderLayout.SOUTH);

@@ -17,6 +17,7 @@ import java.awt.print.PageFormat;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.io.*;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -43,6 +44,10 @@ public class Notepad extends JFrame {
     private JPopupMenu popupMenu;
 
     private JLabel statusBar;
+
+    private JLabel caretPositionLabel;
+
+    private JPanel statusBarContainer;
     private String currentFile;
     private boolean isModified;
     private UndoManager undoManager;
@@ -50,12 +55,16 @@ public class Notepad extends JFrame {
     private boolean wrapText = false;
     private String lastFindText = "";
 
-    private final String iconBase64 = "data:image/x-icon;base64,AAABAAMAICAQAAAAAADoAgAANgAAADAwAAAAAAAAqA4AAB4DAAAQEBAAAAAAACgBAADGEQAAKAAAACAAAABAAAAAAQAEAAAAAACAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAIAAAACAgACAAAAAgACAAICAAADAwMAAgICAAAAA/wAA/wAAAP//AP8AAAD/AP8A//8AAP///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/////////////wAAAAAAD/////////////8AAAAAAA//////////////AAAAAAAP/////////////wAAAAAAD//wAAAAAAAAAAAAAAAAAA//8O7u7u7u7u7u7u7gAAAP//Du7u7u7u7u7u7u4AAAD/8O7u7u7u7u7u7u7gAAAA//Du7u7u7u7u7u7u4AAAAP/w7u7u7u7u7u7u7uAAAAD/8O7u7u7u7u7u7u7gAAAA/w7u7u7u7u7u7u7uAAAAAP8O7u7u7u7u7u7u7gAAAAD/Du7u7u7u7u7u7u4AAAAA/w7u7u7u7u7u7u7uAAAAAPDu7u7u7u7u7u7u4AAAAADw7u7u7u7u7u7u7uAAAAAA8O7u7u7u7u7u7u7gAAAAAPDu7u7u7u7u7u7u4AAAAAAO7u7u7u7u7u7u7gAAAAAADu7u7u7u7u7u7u4AAAAAAA7u7u7u7u7u7u7uAAAAAAAO7u7u7u7u7u7u4AAAAAAA7u7u7u7u7u7u7uAAAAAAAO7u7u7u7u7u7u7gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP//////////4AAAP+AAAD/gAAA/4AAAP+AAAD/gAAAB4AAAAeAAAAHgAAAD4AAAA+AAAAPgAAAD4AAAB+AAAAfgAAAH4AAAB+AAAA/gAAAP4AAAD+AAAA/gAAAf4AAAH+AAAB/gAAAf4AAAP+AAAD/gAAA/////////////////KAAAADAAAABgAAAAAQAIAAAAAACACgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAIAAAACAgACAAAAAgACAAICAAADAwMAAwNzAAPDKpgAEBAQACAgIAAwMDAAREREAFhYWABwcHAAiIiIAKSkpAFVVVQBNTU0AQkJCADk5OQCAfP8AUFD/AJMA1gD/7MwAxtbvANbn5wCQqa0AAAAzAAAAZgAAAJkAAADMAAAzAAAAMzMAADNmAAAzmQAAM8wAADP/AABmAAAAZjMAAGZmAABmmQAAZswAAGb/AACZAAAAmTMAAJlmAACZmQAAmcwAAJn/AADMAAAAzDMAAMxmAADMmQAAzMwAAMz/AAD/ZgAA/5kAAP/MADMAAAAzADMAMwBmADMAmQAzAMwAMwD/ADMzAAAzMzMAMzNmADMzmQAzM8wAMzP/ADNmAAAzZjMAM2ZmADNmmQAzZswAM2b/ADOZAAAzmTMAM5lmADOZmQAzmcwAM5n/ADPMAAAzzDMAM8xmADPMmQAzzMwAM8z/ADP/MwAz/2YAM/+ZADP/zAAz//8AZgAAAGYAMwBmAGYAZgCZAGYAzABmAP8AZjMAAGYzMwBmM2YAZjOZAGYzzABmM/8AZmYAAGZmMwBmZmYAZmaZAGZmzABmmQAAZpkzAGaZZgBmmZkAZpnMAGaZ/wBmzAAAZswzAGbMmQBmzMwAZsz/AGb/AABm/zMAZv+ZAGb/zADMAP8A/wDMAJmZAACZM5kAmQCZAJkAzACZAAAAmTMzAJkAZgCZM8wAmQD/AJlmAACZZjMAmTNmAJlmmQCZZswAmTP/AJmZMwCZmWYAmZmZAJmZzACZmf8AmcwAAJnMMwBmzGYAmcyZAJnMzACZzP8Amf8AAJn/MwCZzGYAmf+ZAJn/zACZ//8AzAAAAJkAMwDMAGYAzACZAMwAzACZMwAAzDMzAMwzZgDMM5kAzDPMAMwz/wDMZgAAzGYzAJlmZgDMZpkAzGbMAJlm/wDMmQAAzJkzAMyZZgDMmZkAzJnMAMyZ/wDMzAAAzMwzAMzMZgDMzJkAzMzMAMzM/wDM/wAAzP8zAJn/ZgDM/5kAzP/MAMz//wDMADMA/wBmAP8AmQDMMwAA/zMzAP8zZgD/M5kA/zPMAP8z/wD/ZgAA/2YzAMxmZgD/ZpkA/2bMAMxm/wD/mQAA/5kzAP+ZZgD/mZkA/5nMAP+Z/wD/zAAA/8wzAP/MZgD/zJkA/8zMAP/M/wD//zMAzP9mAP//mQD//8wAZmb/AGb/ZgBm//8A/2ZmAP9m/wD//2YAIQClAF9fXwB3d3cAhoaGAJaWlgDLy8sAsrKyANfX1wDd3d0A4+PjAOrq6gDx8fEA+Pj4APD7/wCkoKAAgICAAAAA/wAA/wAAAP//AP8AAAD/AP8A//8AAP///wAKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgr//////////////////////////////////////////woKCgoKCgoKCgoKCgoKCgr//////////////////////////////////////////woKCgoKCgoKCgoKCgoKCgr//////////////////////////////////////////woKCgoKCgoKCgoKCgoKCgr//////////////////////////////////////////woKCgoKCgoKCgoKCgoKCgr//////////////////////////////////////////woKCgoKCgoKCgoKCgoKCgr//////////////////////////////////////////woKCgoKCgoKCgoKCgoKCgr/////////CgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgr/////////Cv7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/goKCgoKCgoKCgr///////8K/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/goKCgoKCgoKCgr///////8K/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+CgoKCgoKCgoKCgr///////8K/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+CgoKCgoKCgoKCgr///////8K/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+CgoKCgoKCgoKCgr//////wr+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+CgoKCgoKCgoKCgr//////wr+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+CgoKCgoKCgoKCgr//////wr+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v4KCgoKCgoKCgoKCgr//////wr+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v4KCgoKCgoKCgoKCgr/////Cv7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v4KCgoKCgoKCgoKCgr/////Cv7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v4KCgoKCgoKCgoKCgr/////Cv7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v4KCgoKCgoKCgoKCgr/////Cv7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/goKCgoKCgoKCgoKCgr///8K/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/goKCgoKCgoKCgoKCgr///8K/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/goKCgoKCgoKCgoKCgr///8K/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/goKCgoKCgoKCgoKCgr//wr+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/goKCgoKCgoKCgoKCgr//wr+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+CgoKCgoKCgoKCgoKCgr//wr+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+CgoKCgoKCgoKCgoKCgr//wr+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+CgoKCgoKCgoKCgoKCgr/Cv7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+CgoKCgoKCgoKCgoKCgr/Cv7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+CgoKCgoKCgoKCgoKCgr/Cv7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v4KCgoKCgoKCgoKCgoKCgr/Cv7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v4KCgoKCgoKCgoKCgoKCgoK/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v4KCgoKCgoKCgoKCgoKCgoK/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v4KCgoKCgoKCgoKCgoKCgoK/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/goKCgoKCgoKCgoKCgoKCgoK/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/goKCgoKCgoKCgoKCgoKCgr+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/goKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgr///////8AAP///////wAA////////AAD///////8AAP///////wAA////////AAD4AAAAAf8AAPgAAAAB/wAA+AAAAAH/AAD4AAAAAf8AAPgAAAAB/wAA+AAAAAH/AAD4AAAAAf8AAPgAAAAABwAA+AAAAAAHAAD4AAAAAAcAAPgAAAAADwAA+AAAAAAPAAD4AAAAAA8AAPgAAAAADwAA+AAAAAAPAAD4AAAAAB8AAPgAAAAAHwAA+AAAAAAfAAD4AAAAAB8AAPgAAAAAHwAA+AAAAAA/AAD4AAAAAD8AAPgAAAAAPwAA+AAAAAA/AAD4AAAAAD8AAPgAAAAAfwAA+AAAAAB/AAD4AAAAAH8AAPgAAAAAfwAA+AAAAAB/AAD4AAAAAP8AAPgAAAAA/wAA+AAAAAD/AAD4AAAAAP8AAPgAAAAA/wAA+AAAAAH/AAD4AAAAAf8AAPgAAAAB/wAA////////AAD///////8AAP///////wAA////////AAAoAAAAEAAAACAAAAABAAQAAAAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAgAAAAICAAIAAAACAAIAAgIAAAMDAwACAgIAAAAD/AAD/AAAA//8A/wAAAP8A/wD//wAA////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/////wAAAA/wAAAAAAAAD/Du7u7uAAAPDu7u7u4AAA8O7u7u4AAADw7u7u7gAAAPDu7u7uAAAADu7u7uAAAAAO7u7u4AAAAA7u7u7gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//8AAP//AADABwAAwAcAAMABAADAAQAAwAEAAMADAADAAwAAwAMAAMADAADABwAAwAcAAMAHAAD//wAA//8AAA==";
+    private final String iconBase64 = "AAABAAMAICAQAAAAAADoAgAANgAAADAwAAAAAAAAqA4AAB4DAAAQEBAAAAAAACgBAADGEQAAKAAAACAAAABAAAAAAQAEAAAAAACAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAIAAAACAgACAAAAAgACAAICAAADAwMAAgICAAAAA/wAA/wAAAP//AP8AAAD/AP8A//8AAP///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/////////////wAAAAAAD/////////////8AAAAAAA//////////////AAAAAAAP/////////////wAAAAAAD//wAAAAAAAAAAAAAAAAAA//8O7u7u7u7u7u7u7gAAAP//Du7u7u7u7u7u7u4AAAD/8O7u7u7u7u7u7u7gAAAA//Du7u7u7u7u7u7u4AAAAP/w7u7u7u7u7u7u7uAAAAD/8O7u7u7u7u7u7u7gAAAA/w7u7u7u7u7u7u7uAAAAAP8O7u7u7u7u7u7u7gAAAAD/Du7u7u7u7u7u7u4AAAAA/w7u7u7u7u7u7u7uAAAAAPDu7u7u7u7u7u7u4AAAAADw7u7u7u7u7u7u7uAAAAAA8O7u7u7u7u7u7u7gAAAAAPDu7u7u7u7u7u7u4AAAAAAO7u7u7u7u7u7u7gAAAAAADu7u7u7u7u7u7u4AAAAAAA7u7u7u7u7u7u7uAAAAAAAO7u7u7u7u7u7u4AAAAAAA7u7u7u7u7u7u7uAAAAAAAO7u7u7u7u7u7u7gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP//////////4AAAP+AAAD/gAAA/4AAAP+AAAD/gAAAB4AAAAeAAAAHgAAAD4AAAA+AAAAPgAAAD4AAAB+AAAAfgAAAH4AAAB+AAAA/gAAAP4AAAD+AAAA/gAAAf4AAAH+AAAB/gAAAf4AAAP+AAAD/gAAA/////////////////KAAAADAAAABgAAAAAQAIAAAAAACACgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAIAAAACAgACAAAAAgACAAICAAADAwMAAwNzAAPDKpgAEBAQACAgIAAwMDAAREREAFhYWABwcHAAiIiIAKSkpAFVVVQBNTU0AQkJCADk5OQCAfP8AUFD/AJMA1gD/7MwAxtbvANbn5wCQqa0AAAAzAAAAZgAAAJkAAADMAAAzAAAAMzMAADNmAAAzmQAAM8wAADP/AABmAAAAZjMAAGZmAABmmQAAZswAAGb/AACZAAAAmTMAAJlmAACZmQAAmcwAAJn/AADMAAAAzDMAAMxmAADMmQAAzMwAAMz/AAD/ZgAA/5kAAP/MADMAAAAzADMAMwBmADMAmQAzAMwAMwD/ADMzAAAzMzMAMzNmADMzmQAzM8wAMzP/ADNmAAAzZjMAM2ZmADNmmQAzZswAM2b/ADOZAAAzmTMAM5lmADOZmQAzmcwAM5n/ADPMAAAzzDMAM8xmADPMmQAzzMwAM8z/ADP/MwAz/2YAM/+ZADP/zAAz//8AZgAAAGYAMwBmAGYAZgCZAGYAzABmAP8AZjMAAGYzMwBmM2YAZjOZAGYzzABmM/8AZmYAAGZmMwBmZmYAZmaZAGZmzABmmQAAZpkzAGaZZgBmmZkAZpnMAGaZ/wBmzAAAZswzAGbMmQBmzMwAZsz/AGb/AABm/zMAZv+ZAGb/zADMAP8A/wDMAJmZAACZM5kAmQCZAJkAzACZAAAAmTMzAJkAZgCZM8wAmQD/AJlmAACZZjMAmTNmAJlmmQCZZswAmTP/AJmZMwCZmWYAmZmZAJmZzACZmf8AmcwAAJnMMwBmzGYAmcyZAJnMzACZzP8Amf8AAJn/MwCZzGYAmf+ZAJn/zACZ//8AzAAAAJkAMwDMAGYAzACZAMwAzACZMwAAzDMzAMwzZgDMM5kAzDPMAMwz/wDMZgAAzGYzAJlmZgDMZpkAzGbMAJlm/wDMmQAAzJkzAMyZZgDMmZkAzJnMAMyZ/wDMzAAAzMwzAMzMZgDMzJkAzMzMAMzM/wDM/wAAzP8zAJn/ZgDM/5kAzP/MAMz//wDMADMA/wBmAP8AmQDMMwAA/zMzAP8zZgD/M5kA/zPMAP8z/wD/ZgAA/2YzAMxmZgD/ZpkA/2bMAMxm/wD/mQAA/5kzAP+ZZgD/mZkA/5nMAP+Z/wD/zAAA/8wzAP/MZgD/zJkA/8zMAP/M/wD//zMAzP9mAP//mQD//8wAZmb/AGb/ZgBm//8A/2ZmAP9m/wD//2YAIQClAF9fXwB3d3cAhoaGAJaWlgDLy8sAsrKyANfX1wDd3d0A4+PjAOrq6gDx8fEA+Pj4APD7/wCkoKAAgICAAAAA/wAA/wAAAP//AP8AAAD/AP8A//8AAP///wAKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgr//////////////////////////////////////////woKCgoKCgoKCgoKCgoKCgr//////////////////////////////////////////woKCgoKCgoKCgoKCgoKCgr//////////////////////////////////////////woKCgoKCgoKCgoKCgoKCgr//////////////////////////////////////////woKCgoKCgoKCgoKCgoKCgr//////////////////////////////////////////woKCgoKCgoKCgoKCgoKCgr//////////////////////////////////////////woKCgoKCgoKCgoKCgoKCgr/////////CgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgr/////////Cv7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/goKCgoKCgoKCgr///////8K/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/goKCgoKCgoKCgr///////8K/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+CgoKCgoKCgoKCgr///////8K/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+CgoKCgoKCgoKCgr///////8K/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+CgoKCgoKCgoKCgr//////wr+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+CgoKCgoKCgoKCgr//////wr+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+CgoKCgoKCgoKCgr//////wr+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v4KCgoKCgoKCgoKCgr//////wr+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v4KCgoKCgoKCgoKCgr/////Cv7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v4KCgoKCgoKCgoKCgr/////Cv7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v4KCgoKCgoKCgoKCgr/////Cv7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v4KCgoKCgoKCgoKCgr/////Cv7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/goKCgoKCgoKCgoKCgr///8K/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/goKCgoKCgoKCgoKCgr///8K/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/goKCgoKCgoKCgoKCgr///8K/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/goKCgoKCgoKCgoKCgr//wr+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/goKCgoKCgoKCgoKCgr//wr+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+CgoKCgoKCgoKCgoKCgr//wr+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+CgoKCgoKCgoKCgoKCgr//wr+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+CgoKCgoKCgoKCgoKCgr/Cv7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+CgoKCgoKCgoKCgoKCgr/Cv7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+CgoKCgoKCgoKCgoKCgr/Cv7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v4KCgoKCgoKCgoKCgoKCgr/Cv7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v4KCgoKCgoKCgoKCgoKCgoK/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v4KCgoKCgoKCgoKCgoKCgoK/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v4KCgoKCgoKCgoKCgoKCgoK/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/goKCgoKCgoKCgoKCgoKCgoK/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/goKCgoKCgoKCgoKCgoKCgr+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/goKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgr///////8AAP///////wAA////////AAD///////8AAP///////wAA////////AAD4AAAAAf8AAPgAAAAB/wAA+AAAAAH/AAD4AAAAAf8AAPgAAAAB/wAA+AAAAAH/AAD4AAAAAf8AAPgAAAAABwAA+AAAAAAHAAD4AAAAAAcAAPgAAAAADwAA+AAAAAAPAAD4AAAAAA8AAPgAAAAADwAA+AAAAAAPAAD4AAAAAB8AAPgAAAAAHwAA+AAAAAAfAAD4AAAAAB8AAPgAAAAAHwAA+AAAAAA/AAD4AAAAAD8AAPgAAAAAPwAA+AAAAAA/AAD4AAAAAD8AAPgAAAAAfwAA+AAAAAB/AAD4AAAAAH8AAPgAAAAAfwAA+AAAAAB/AAD4AAAAAP8AAPgAAAAA/wAA+AAAAAD/AAD4AAAAAP8AAPgAAAAA/wAA+AAAAAH/AAD4AAAAAf8AAPgAAAAB/wAA////////AAD///////8AAP///////wAA////////AAAoAAAAEAAAACAAAAABAAQAAAAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAgAAAAICAAIAAAACAAIAAgIAAAMDAwACAgIAAAAD/AAD/AAAA//8A/wAAAP8A/wD//wAA////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/////wAAAA/wAAAAAAAAD/Du7u7uAAAPDu7u7u4AAA8O7u7u4AAADw7u7u7gAAAPDu7u7uAAAADu7u7uAAAAAO7u7u4AAAAA7u7u7gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//8AAP//AADABwAAwAcAAMABAADAAQAAwAEAAMADAADAAwAAwAMAAMADAADABwAAwAcAAMAHAAD//wAA//8AAA==";
 
     // 搜索对话框的参数记忆功能
     private boolean isSearchCaseSensitive = false;
     private boolean isSearchLooping = false;
     private boolean isSearchDirectionDown = true;
+
+    private ReplaceDialog replaceDialog;
+
+    private FindDialog findDialog;
 
     private Font currentFont = new Font("微软雅黑", Font.PLAIN, 16);
     private PageFormat pageFormat = PrinterJob.getPrinterJob().defaultPage();
@@ -74,7 +83,7 @@ public class Notepad extends JFrame {
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setSize(800, 600);
         setLocationRelativeTo(null);
-        byte[] iconBytes = Base64.getMimeDecoder().decode(iconBase64);
+        byte[] iconBytes = Base64.getDecoder().decode(iconBase64);
         setIconImage(new ImageIcon(iconBytes).getImage());
 
         // 初始化文本区域
@@ -252,8 +261,11 @@ public class Notepad extends JFrame {
 
         toggleStatusBarMenuItem = new JCheckBoxMenuItem("状态栏(S)");
         toggleStatusBarMenuItem.setMnemonic(KeyEvent.VK_S);
-        toggleStatusBarMenuItem.addActionListener(unimplementedListener);
+        toggleStatusBarMenuItem.setSelected(true);
+        toggleStatusBarMenuItem.addActionListener(e -> toggleStatusBar());
         formatMenu.add(toggleStatusBarMenuItem);
+
+        formatMenu.addSeparator();
 
         changeFontMenuItem = new JMenuItem("字体(F)...");
         // changeFontMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, 0));
@@ -347,6 +359,24 @@ public class Notepad extends JFrame {
         
         textArea.setComponentPopupMenu(popupMenu);
 
+        statusBar = new JLabel("");
+        statusBar.setPreferredSize(new Dimension(BigDecimal.valueOf(statusBar.getSize().getWidth()).intValue(), 20));
+        caretPositionLabel = new JLabel("第 1 行，第 1 列");
+        statusBarContainer = new JPanel(new GridBagLayout());
+        GridBagConstraints gbcStatusBar = new GridBagConstraints();
+        gbcStatusBar.gridx = 0; gbcStatusBar.gridy = 0; gbcStatusBar.weightx = 0.6;
+        gbcStatusBar.anchor = GridBagConstraints.WEST;
+        statusBarContainer.add(statusBar, gbcStatusBar);
+        gbcStatusBar.gridx = 1; gbcStatusBar.gridy = 0; gbcStatusBar.weightx = 0.3;
+        gbcStatusBar.anchor = GridBagConstraints.WEST;
+        statusBarContainer.add(caretPositionLabel, gbcStatusBar);
+        gbcStatusBar.gridx = 2; gbcStatusBar.gridy = 0; gbcStatusBar.weightx = 0.1;
+        gbcStatusBar.anchor = GridBagConstraints.EAST;
+        JLabel resizeMark = new JLabel("⣠");
+        resizeMark.setForeground(Color.GRAY);
+        statusBarContainer.add(resizeMark, gbcStatusBar);
+        add(statusBarContainer, BorderLayout.SOUTH);
+
         textArea.addCaretListener(e -> {
             int dot = e.getDot();
             int mark = e.getMark();
@@ -360,6 +390,17 @@ public class Notepad extends JFrame {
             copyPopupMenuItem.setEnabled(dot != mark);
             deleteMenuItem.setEnabled(dot != mark);
             deletePopupMenuItem.setEnabled(dot != mark);
+
+            int caretPosition = textArea.getCaretPosition();
+            int line;
+            try {
+                Element root = textArea.getDocument().getDefaultRootElement();
+                line = root.getElementIndex(caretPosition);
+                int column = caretPosition - root.getElement(line).getStartOffset();
+                caretPositionLabel.setText("第 " + (line + 1) + " 行，第 " + (column + 1) + " 列");
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         });
 
         // 添加拖放支持到文本区域
@@ -463,10 +504,6 @@ public class Notepad extends JFrame {
             }
         });
 
-
-        statusBar = new JLabel("准备就绪");
-        add(statusBar, BorderLayout.SOUTH);
-
         // 将文本区域添加到主窗口
         add(new JScrollPane(textArea), BorderLayout.CENTER);
 
@@ -509,6 +546,11 @@ public class Notepad extends JFrame {
     private void goTo() {
         String lineNumber = JOptionPane.showInputDialog(this, "请输入行号：", "跳转", JOptionPane.PLAIN_MESSAGE);
         if (lineNumber != null) {
+            // 判断是不是数字
+            if (!lineNumber.matches("\\d+")) {
+                JOptionPane.showMessageDialog(this, "请输入数字！", "记事本 - 跳行", JOptionPane.ERROR_MESSAGE);
+                throw new IllegalArgumentException("请输入数字！");
+            }
             int lineNumberInt = Integer.parseInt(lineNumber);
             int lineCount = this.getLineCount();
 
@@ -601,20 +643,19 @@ public class Notepad extends JFrame {
     private void pageSetup() {
         PrinterJob job = PrinterJob.getPrinterJob();
         this.pageFormat = job.pageDialog(this.pageFormat);
-//        try {
-//            PrinterJob job = PrinterJob.getPrinterJob();
-//            job.setPrintable(textArea.getPrintable(null, null));
-//            if (job.printDialog()) {
-//                job.print();
-//            }
-//        } catch (PrinterException e) {
-//            throw new RuntimeException(e);
-//        }
     }
 
     // 打开替换对话框
     private void replace() {
-        ReplaceDialog replaceDialog = new ReplaceDialog(this, this.textArea);
+        if (replaceDialog != null && replaceDialog.isVisible()) return;
+        replaceDialog = new ReplaceDialog(this, this.textArea);
+        replaceDialog.setVisible(true);
+    }
+
+    // 从查找对话框跳转到替换对话框
+    private void replace(String findText) {
+        if (replaceDialog != null && replaceDialog.isVisible()) return;
+        replaceDialog = new ReplaceDialog(this, this.textArea, findText);
         replaceDialog.setVisible(true);
     }
 
@@ -645,7 +686,7 @@ public class Notepad extends JFrame {
         currentFile = null;
         isModified = false;
         setTitle("无标题 - 记事本");
-        statusBar.setText("准备就绪");
+        statusBar.setText("");
     }
 
     // 打开一个相同的本程序进程
@@ -695,7 +736,7 @@ public class Notepad extends JFrame {
                 currentFile = file.getAbsolutePath();
                 setTitle(file.getName() + " - 记事本");
                 isModified = false;
-                statusBar.setText("准备就绪");
+                statusBar.setText("");
             } catch (IOException e) {
                 JOptionPane.showMessageDialog(this, "打开文件失败: " + e.getMessage(), "错误", JOptionPane.ERROR_MESSAGE);
             }
@@ -731,7 +772,7 @@ public class Notepad extends JFrame {
             currentFile = file.getAbsolutePath();
             setTitle(file.getName() + " - 记事本");
             isModified = false;
-            statusBar.setText("准备就绪");
+            statusBar.setText("");
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, "打开文件失败: " + e.getMessage(), "错误", JOptionPane.ERROR_MESSAGE);
         }
@@ -860,7 +901,16 @@ public class Notepad extends JFrame {
     // 查找
     private void find() {
         // 调用FindDialog类查找文本
-        FindDialog findDialog = new FindDialog(this, this.textArea);
+        if (findDialog != null && findDialog.isVisible()) return;
+        findDialog = new FindDialog(this, this.textArea);
+        findDialog.setVisible(true);
+    }
+
+    // 从替换对话框跳转到查找对话框
+    private void find(String findText) {
+        // 调用FindDialog类查找文本
+        if (findDialog != null && findDialog.isVisible()) return;
+        findDialog = new FindDialog(this, this.textArea, findText);
         findDialog.setVisible(true);
     }
 
@@ -894,9 +944,18 @@ public class Notepad extends JFrame {
 
     }
 
+    private void toggleStatusBar() {
+        statusBarContainer.setVisible(!statusBarContainer.isVisible());
+    }
+
     // 显示帮助信息
     private void help() {
-        JOptionPane.showMessageDialog(this, "这是一个简单的记事本程序。", "帮助", JOptionPane.INFORMATION_MESSAGE);
+        // JOptionPane.showMessageDialog(this, "这是一个简单的记事本程序。", "帮助", JOptionPane.INFORMATION_MESSAGE);
+        try {
+            Desktop.getDesktop().browse(new URI("https://cn.bing.com/search?q=%E8%8E%B7%E5%8F%96%E6%9C%89%E5%85%B3+windows+%E4%B8%AD%E7%9A%84%E8%AE%B0%E4%BA%8B%E6%9C%AC%E7%9A%84%E5%B8%AE%E5%8A%A9"));
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "功能错误: " + e.getMessage(), "错误", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     // 发送反馈
@@ -910,7 +969,7 @@ public class Notepad extends JFrame {
 
     // 显示关于信息
     private void showAbout() {
-        JOptionPane.showMessageDialog(this, "版本：4.0\n作者：XXX", "关于记事本", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, "版本：5.0\n作者：你", "关于记事本", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void toggleRightToLeft() {
@@ -966,21 +1025,40 @@ public class Notepad extends JFrame {
             }
         };
 
+        private final KeyAdapter ctrlRKeyAdapter = new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_R && e.isControlDown()) {
+                    parent.replace(findTextField.getText());
+                    dispose();
+                }
+            }
+        };
+
         public FindDialog(Notepad parent, JTextPane textArea) {
-            super(parent, "查找", true);
+            super(parent, "查找", false);
             this.parent = parent;
             this.textArea = textArea;
             initializeUI();
         }
 
+        public FindDialog(Notepad parent, JTextPane textArea, String findText) {
+            super(parent, "查找", false);
+            this.parent = parent;
+            this.textArea = textArea;
+            initializeUI(findText);
+        }
+
         private void initializeUI() {
-            JPanel panel = new JPanel(new BorderLayout(10, 10));
+            JPanel panel = new JPanel(new GridBagLayout());
             panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
             // 查找内容面板
-            JPanel findPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-            JLabel findLabel = new JLabel("查找内容:");
             findTextField = new JTextField(20);
+            JPanel findPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            JLabel findLabel = new JLabel("查找内容(N):");
+            findLabel.setDisplayedMnemonic(KeyEvent.VK_N);
+            findLabel.setLabelFor(findTextField);
 
             // 有文本被选中时，优先设置为被选中的文本；否则设置为上次查找的文本；如果都没有，则留空
             if (this.textArea.getSelectedText() != null) {
@@ -999,8 +1077,8 @@ public class Notepad extends JFrame {
             JPanel firstRowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
             matchCaseCheckBox = new JCheckBox("区分大小写(C)");
             matchCaseCheckBox.setMnemonic(KeyEvent.VK_C);
-            loopCheckBox = new JCheckBox("循环(R)");
-            loopCheckBox.setMnemonic(KeyEvent.VK_R);
+            loopCheckBox = new JCheckBox("循环(L)");
+            loopCheckBox.setMnemonic(KeyEvent.VK_L);
             matchCaseCheckBox.setSelected(parent.isSearchCaseSensitive);
             loopCheckBox.setSelected(parent.isSearchLooping);
             firstRowPanel.add(matchCaseCheckBox);
@@ -1032,9 +1110,12 @@ public class Notepad extends JFrame {
 
             // 按钮面板
             JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+            Dimension buttonSize = new Dimension(125, 25);
             findNextButton = new JButton("查找下一个(F)");
             findNextButton.setMnemonic(KeyEvent.VK_F);
+            findNextButton.setPreferredSize(buttonSize);
             cancelButton = new JButton("取消");
+            cancelButton.setPreferredSize(buttonSize);
 
             findNextButton.addActionListener(e -> findNext());
             cancelButton.addActionListener(e -> dispose());
@@ -1076,17 +1157,47 @@ public class Notepad extends JFrame {
             findNextButton.addKeyListener(escapeKeyAdapter);
             cancelButton.addKeyListener(escapeKeyAdapter);
 
+            findTextField.addKeyListener(ctrlRKeyAdapter);
+            matchCaseCheckBox.addKeyListener(ctrlRKeyAdapter);
+            loopCheckBox.addKeyListener(ctrlRKeyAdapter);
+            upRadioButton.addKeyListener(ctrlRKeyAdapter);
+            downRadioButton.addKeyListener(ctrlRKeyAdapter);
+            findNextButton.addKeyListener(ctrlRKeyAdapter);
+            cancelButton.addKeyListener(ctrlRKeyAdapter);
+
+            JPanel caseSensitiveAndDirectionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            caseSensitiveAndDirectionPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+            caseSensitiveAndDirectionPanel.add(matchCaseCheckBox);
+            caseSensitiveAndDirectionPanel.add(directionPanel);
+            JPanel loopPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            loopPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+            loopPanel.add(loopCheckBox);
+
             buttonPanel.add(findNextButton);
             buttonPanel.add(cancelButton);
 
             // 组合所有面板
-            panel.add(findPanel, BorderLayout.NORTH);
-            panel.add(optionPanel, BorderLayout.CENTER);
-            panel.add(buttonPanel, BorderLayout.SOUTH);
+            // 组合所有面板
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.anchor = GridBagConstraints.WEST;
+            gbc.insets = new Insets(3, 3, 3, 3);
+            gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0.75; panel.add(findPanel, gbc);
+            gbc.gridx = 1; gbc.gridy = 0; gbc.weightx = 0.25; panel.add(findNextButton, gbc);
+            gbc.gridx = 0; gbc.gridy = 2; gbc.weightx = 0.75; panel.add(caseSensitiveAndDirectionPanel, gbc);
+            gbc.gridx = 0; gbc.gridy = 3; gbc.weightx = 0.75; panel.add(loopPanel, gbc);
+            gbc.gridx = 1; gbc.gridy = 2; gbc.weightx = 0.25; panel.add(cancelButton, gbc);
+//            panel.add(findPanel, BorderLayout.NORTH);
+//            panel.add(optionPanel, BorderLayout.CENTER);
+//            panel.add(buttonPanel, BorderLayout.SOUTH);
 
             add(panel);
             pack();
             setLocationRelativeTo(parent);
+        }
+
+        private void initializeUI(String findText) {
+            initializeUI();
+            findTextField.setText(findText);
         }
 
         private void findNext() {
@@ -1206,11 +1317,28 @@ public class Notepad extends JFrame {
             }
         };
 
+        private final KeyAdapter ctrlFKeyAdapter = new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_F && e.isControlDown()) {
+                    parent.find(findTextField.getText());
+                    dispose();
+                }
+            }
+        };
+
         public ReplaceDialog(Notepad parent, JTextPane textArea) {
-            super(parent, "替换", true);
+            super(parent, "替换", false);
             this.parent = parent;
             this.textArea = textArea;
             initializeUI();
+        }
+
+        public ReplaceDialog(Notepad parent, JTextPane textArea, String findText) {
+            super(parent, "替换", false);
+            this.parent = parent;
+            this.textArea = textArea;
+            initializeUI(findText);
         }
 
         private void initializeUI() {
@@ -1305,7 +1433,7 @@ public class Notepad extends JFrame {
                 }
             });
 
-            // setResizable(false);
+            setResizable(false);
             findTextField.addKeyListener(escapeKeyAdapter);
             replaceTextField.addKeyListener(escapeKeyAdapter);
             matchCaseCheckBox.addKeyListener(escapeKeyAdapter);
@@ -1314,6 +1442,15 @@ public class Notepad extends JFrame {
             replaceButton.addKeyListener(escapeKeyAdapter);
             replaceAllButton.addKeyListener(escapeKeyAdapter);
             cancelButton.addKeyListener(escapeKeyAdapter);
+
+            findTextField.addKeyListener(ctrlFKeyAdapter);
+            replaceTextField.addKeyListener(ctrlFKeyAdapter);
+            matchCaseCheckBox.addKeyListener(ctrlFKeyAdapter);
+            loopCheckBox.addKeyListener(ctrlFKeyAdapter);
+            findNextButton.addKeyListener(ctrlFKeyAdapter);
+            replaceButton.addKeyListener(ctrlFKeyAdapter);
+            replaceAllButton.addKeyListener(ctrlFKeyAdapter);
+            cancelButton.addKeyListener(ctrlFKeyAdapter);
 
             findTextField.addKeyListener(new KeyAdapter() {
                 public void keyPressed(KeyEvent e) {
@@ -1347,6 +1484,11 @@ public class Notepad extends JFrame {
             add(panel);
             pack();
             setLocationRelativeTo(parent);
+        }
+
+        private void initializeUI(String findText) {
+            initializeUI();
+            findTextField.setText(findText);
         }
 
         // 查找下一个
@@ -2318,7 +2460,7 @@ public class Notepad extends JFrame {
         }
     }
 
-    class NotImplementedException extends Exception {
+    static class NotImplementedException extends Exception {
         public NotImplementedException(String message)
         {
             super(message);

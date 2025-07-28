@@ -876,7 +876,9 @@ public class Notepad extends JFrame {
     private void printFile() {
         try {
             PrinterJob job = PrinterJob.getPrinterJob();
-            JTextArea setWrappedTextArea = textArea;
+            JTextArea setWrappedTextArea = new JTextArea();
+            setWrappedTextArea.setText(textArea.getText());
+            setWrappedTextArea.setFont(textArea.getFont());
             setWrappedTextArea.setLineWrap(true);
             job.setPrintable(setWrappedTextArea.getPrintable(null, null), this.pageFormat);
             if (job.printDialog()) {

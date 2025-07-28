@@ -732,7 +732,7 @@ public class Notepad extends JFrame {
             File file = fileChooser.getSelectedFile();
             try  {
                 encoding = detectEncoding(file.getAbsolutePath());
-                InputStreamReader reader = new InputStreamReader(new FileInputStream(file), detectEncoding(file.getAbsolutePath()));
+                InputStreamReader reader = new InputStreamReader(new FileInputStream(file), !Objects.equals(encoding, "OTHER") ? encoding : "UTF-8");
                 BufferedReader readerEx = new BufferedReader(reader);
                 StringBuilder text = new StringBuilder();
                 String line;

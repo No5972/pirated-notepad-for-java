@@ -31,18 +31,20 @@ java Notepad
 
 5.0 添加了切换状态栏显示隐藏功能；状态栏添加实时显示光标所在行数和列数，添加调整窗口大小的标记，调整高度；帮助主题菜单项改为同 Windows 记事本一致（打开默认浏览器并转到必应搜索“获取有关 windows 中的记事本的帮助”）；查找、替换窗口可以使用 ```Ctrl + R```、```Ctrl + F``` 快捷键切换，且自动填入查找文本的输入框的内容；查找、替换窗口可切换到主窗口继续编辑，无需关闭；优化查找窗口的布局，和替换窗口基本一致，查找窗口的循环复选框访问键改为 ```L```，添加查找文本输入框的访问键 ```N```；替换窗口删除标题栏的图标；删除状态栏默认显示的“准备就绪”提示；修复了替换窗口意外可以调整窗口大小的问题；修复了转到功能意外可以输入非数字字符的问题。（截图暂时为 4.0 版本）
 
+6.0 添加了切换自动换行功能（主编辑控件不再使用 ```JTextPane```，改为 ```JTextArea```；打印文件时打印出来的内容将固定自动换行）；全部替换功能提示改为在主窗口底部状态栏显示，不再弹出消息框； 原本有文件打开时，执行打开文件菜单时，打开文件对话框将默认定位到当前文件所在目录；优化查找对话框的布局；当前有文件打开，执行另存为功能时，保存对话框将自动定位到当前文件所在目录，并默认填入当前文件的文件名；状态栏添加显示当前文件的编码；修复状态栏主要信息未显示的问题；修复打开 ```GBK``` 或 ```UTF-8``` 编码文件时乱码的问题；修复保存文件提示是否覆盖点击否的时候文件内容意外丢失的问题。
+
 # 截图
 
-![](https://picx.zhimg.com/v2-161d3dcde923b48bf2348fa38ae347e9_r.png)
+![](https://pic1.zhimg.com/v2-e68d810c3ff4b30b5a2d679f7a5c8a01_r.png)
 
-![](https://picx.zhimg.com/v2-893e490a98c0ef943320b5379ff3f673_r.png)
+![](https://pica.zhimg.com/v2-9e5c31009cc6c633ecdb894f3699ecf7_r.png)
 
-![](https://pic1.zhimg.com/v2-9bebee89fe14bb99048b0a8c5edff751_r.png)
+![](https://picx.zhimg.com/v2-26c5aae41ff93b6f829e40183550d33f_r.png)
 
-![](https://picx.zhimg.com/v2-6d3714049654ac31f680566851f8782f_r.png)
+![](https://picx.zhimg.com/v2-3d000e85499085883fb884f36c222cac_r.png)
 
-![](https://picx.zhimg.com/v2-fc0513267e08d6e7119ad189022504b4_r.png)
+![](https://pic1.zhimg.com/v2-81119e6bd7dc0b2696e85c671469e920_r.png)
 
-![](https://picx.zhimg.com/v2-2a095f2f778bd67448b1eaf9a0a3a24e_r.png)
+![](https://pic1.zhimg.com/v2-a1a2111aebaf951979965c3a82be96cd_r.png)
 
-![](https://picx.zhimg.com/v2-99a1a25dc63460aefe20a9a8c6e2848f_r.png)
+![](https://picx.zhimg.com/v2-8bcee433a28dbb77346001da7c634249_r.png)

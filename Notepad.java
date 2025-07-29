@@ -21,7 +21,6 @@ import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Date;
@@ -351,15 +350,15 @@ public class Notepad extends JFrame {
         rightToLeftPopupMenuItem.setMnemonic(KeyEvent.VK_R);
         rightToLeftPopupMenuItem.addActionListener(e -> toggleRightToLeft());
         popupMenu.add(rightToLeftPopupMenuItem);
-        
+
         popupMenu.addSeparator();
-        
+
         searchBingPopupMenuItem = new JMenuItem("使用 Bing 搜索(B)...");
         searchBingPopupMenuItem.setMnemonic(KeyEvent.VK_B);
         searchBingPopupMenuItem.setEnabled(false);
         searchBingPopupMenuItem.addActionListener(e -> searchBing());
         popupMenu.add(searchBingPopupMenuItem);
-        
+
         textArea.setComponentPopupMenu(popupMenu);
 
         statusBar = new JLabel("");
@@ -445,7 +444,7 @@ public class Notepad extends JFrame {
                     if (dtde.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
                         dtde.acceptDrop(DnDConstants.ACTION_COPY);
                         java.util.List<?> list = (java.util.List<?>) dtde.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
-                        
+
                         // 如果只拖入了一个文件，则尝试打开该文件
                         if (list.size() == 1 && list.get(0) instanceof File) {
                             File file = (File) list.get(0);
@@ -630,13 +629,13 @@ public class Notepad extends JFrame {
             String allText = textArea.getText();
             int caretPosition = textArea.getCaretPosition();
             int foundIndex = allText.indexOf(searchText, caretPosition);
-            
+
             if (foundIndex == -1 && isSearchLooping) {
                 // 如果未找到且启用了循环查找，则从文档开头重新开始查找
                 statusBar.setText("从顶部开始查找下一项");
                 foundIndex = allText.indexOf(searchText, 0);
             }
-            
+
             if (foundIndex != -1) {
                 // 找到匹配项，选中它
                 textArea.setCaretPosition(foundIndex + searchText.length());
@@ -810,7 +809,7 @@ public class Notepad extends JFrame {
             return saveAsFile(false);
         } else {
             String encoding = detectEncoding(currentFile);
-            try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(currentFile), encoding))) {
+            try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(currentFile), !Objects.equals(encoding, "OTHER") ? encoding : "UTF-8"))) {
                 writer.write(textArea.getText());
                 isModified = false;
                 setTitle(currentFile.substring(currentFile.lastIndexOf(File.separator) + 1) + " - 记事本");
@@ -843,7 +842,7 @@ public class Notepad extends JFrame {
                 int confirm = JOptionPane.showConfirmDialog(this, "文件已存在，是否覆盖？", "提示", JOptionPane.YES_NO_OPTION);
                 if (confirm == JOptionPane.YES_OPTION) {
                     // 覆盖文件
-                    try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(saveNewFile), detectEncoding(currentFile)))) {
+                    try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(saveNewFile), !Objects.equals(encoding, "OTHER") ? encoding : "UTF-8"))) {
                         writer.write(textArea.getText());
                         isModified = false;
                         currentFile = saveNewFile;
@@ -858,7 +857,7 @@ public class Notepad extends JFrame {
                 }
             }
             // 保存为新的文件
-            try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(saveNewFile), detectEncoding(currentFile)))) {
+            try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(saveNewFile), !Objects.equals(encoding, "OTHER") ? encoding : "UTF-8"))) {
                 writer.write(textArea.getText());
                 isModified = false;
                 currentFile = saveNewFile;
@@ -1120,7 +1119,7 @@ public class Notepad extends JFrame {
 
             // 复选框面板
             JPanel optionPanel = new JPanel(new GridLayout(3, 1));
-            
+
             // 第一行：区分大小写和循环
             JPanel firstRowPanel = new JPanel(new GridLayout(2, 1));
             matchCaseCheckBox = new JCheckBox("区分大小写(C)");
@@ -1131,7 +1130,7 @@ public class Notepad extends JFrame {
             loopCheckBox.setSelected(parent.isSearchLooping);
             firstRowPanel.add(matchCaseCheckBox);
             firstRowPanel.add(loopCheckBox);
-            
+
             // 第二行：方向选择
             JPanel directionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
             directionPanel.setBorder(BorderFactory.createTitledBorder("方向"));
@@ -1144,7 +1143,7 @@ public class Notepad extends JFrame {
             directionGroup.add(downRadioButton);
             directionPanel.add(upRadioButton);
             directionPanel.add(downRadioButton);
-            
+
             // 读取主窗口记忆的查找方向参数
             if (parent.isSearchDirectionDown) {
                 downRadioButton.setSelected(true);
@@ -1257,9 +1256,9 @@ public class Notepad extends JFrame {
             int foundIndex = -1;
             boolean matchCase = matchCaseCheckBox.isSelected();
             boolean loop = loopCheckBox.isSelected();
-            
+
             // 如果没有选中"向上"，则默认是"向下"
-            boolean searchUp = upRadioButton.isSelected(); 
+            boolean searchUp = upRadioButton.isSelected();
 
             if (matchCase) {
                 if (searchUp) {

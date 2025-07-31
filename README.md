@@ -33,18 +33,20 @@ java Notepad
 
 6.0 添加了切换自动换行功能（主编辑控件不再使用 ```JTextPane```，改为 ```JTextArea```；打印文件时打印出来的内容将固定自动换行）；全部替换功能提示改为在主窗口底部状态栏显示，不再弹出消息框； 原本有文件打开时，执行打开文件菜单时，打开文件对话框将默认定位到当前文件所在目录；优化查找对话框的布局；当前有文件打开，执行另存为功能时，保存对话框将自动定位到当前文件所在目录，并默认填入当前文件的文件名；状态栏添加显示当前文件的编码；修复状态栏主要信息未显示的问题；修复打开 ```GBK``` 或 ```UTF-8``` 编码文件时乱码的问题；修复保存文件提示是否覆盖点击否的时候文件内容意外丢失的问题。尚未解决的问题还有：字体功能的字体对话框不能完整加载所有字体，是因为有些字体不是为所有用户安装的，所以这些不是给所有用户安装的字体可能无法在本程序加载到，请将要使用的字体文件右键选择为所有用户安装。
 
+6.1 添加了从本应用程序打开方式以及将文件拖放到本程序文件时打开该文件的功能（假如编译为 exe 应用程序时可能会用到）；默认字体改为 12pt（适配默认打印样式）；修复本程序图标不能加载的问题。
+
 # 截图
 
-![](https://pic1.zhimg.com/v2-e68d810c3ff4b30b5a2d679f7a5c8a01_r.png)
+![](https://pica.zhimg.com/v2-3f9b5638d2af06034503ac5b9cd32f24_r.png)
 
-![](https://pica.zhimg.com/v2-9e5c31009cc6c633ecdb894f3699ecf7_r.png)
+![](https://pic1.zhimg.com/v2-98f265471e12a6c14c0471827bece137_r.png)
 
-![](https://picx.zhimg.com/v2-26c5aae41ff93b6f829e40183550d33f_r.png)
+![](https://picx.zhimg.com/v2-36045bed9620543ea4bfbeab190f32e0_r.png)
 
-![](https://picx.zhimg.com/v2-3d000e85499085883fb884f36c222cac_r.png)
+![](https://pic1.zhimg.com/v2-e45483a1b2d0945745574aff41f37ecb_r.png)
 
-![](https://pic1.zhimg.com/v2-81119e6bd7dc0b2696e85c671469e920_r.png)
+![](https://pic1.zhimg.com/v2-7e80585d1138c6abfa11d9ddb2aca411_r.png)
 
-![](https://pic1.zhimg.com/v2-a1a2111aebaf951979965c3a82be96cd_r.png)
+![](https://pic1.zhimg.com/v2-9950c08b4707c1a7ae93e33536196688_r.png)
 
-![](https://picx.zhimg.com/v2-8bcee433a28dbb77346001da7c634249_r.png)
+![](https://pica.zhimg.com/v2-8533d15d10ba564d6eecf91e41891013_r.png)

@@ -57,7 +57,7 @@ public class Notepad extends JFrame {
     private String searchText = "";
     private String lastFindText = "";
 
-    private final String iconBase64 = "AAABAAMAICAQAAAAAADoAgAANgAAADAwAAAAAAAAqA4AAB4DAAAQEBAAAAAAACgBAADGEQAAKAAAACAAAABAAAAAAQAEAAAAAACAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAIAAAACAgACAAAAAgACAAICAAADAwMAAgICAAAAA/wAA/wAAAP//AP8AAAD/AP8A//8AAP///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/////////////wAAAAAAD/////////////8AAAAAAA//////////////AAAAAAAP/////////////wAAAAAAD//wAAAAAAAAAAAAAAAAAA//8O7u7u7u7u7u7u7gAAAP//Du7u7u7u7u7u7u4AAAD/8O7u7u7u7u7u7u7gAAAA//Du7u7u7u7u7u7u4AAAAP/w7u7u7u7u7u7u7uAAAAD/8O7u7u7u7u7u7u7gAAAA/w7u7u7u7u7u7u7uAAAAAP8O7u7u7u7u7u7u7gAAAAD/Du7u7u7u7u7u7u4AAAAA/w7u7u7u7u7u7u7uAAAAAPDu7u7u7u7u7u7u4AAAAADw7u7u7u7u7u7u7uAAAAAA8O7u7u7u7u7u7u7gAAAAAPDu7u7u7u7u7u7u4AAAAAAO7u7u7u7u7u7u7gAAAAAADu7u7u7u7u7u7u4AAAAAAA7u7u7u7u7u7u7uAAAAAAAO7u7u7u7u7u7u4AAAAAAA7u7u7u7u7u7u7uAAAAAAAO7u7u7u7u7u7u7gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP//////////4AAAP+AAAD/gAAA/4AAAP+AAAD/gAAAB4AAAAeAAAAHgAAAD4AAAA+AAAAPgAAAD4AAAB+AAAAfgAAAH4AAAB+AAAA/gAAAP4AAAD+AAAA/gAAAf4AAAH+AAAB/gAAAf4AAAP+AAAD/gAAA/////////////////KAAAADAAAABgAAAAAQAIAAAAAACACgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAIAAAACAgACAAAAAgACAAICAAADAwMAAwNzAAPDKpgAEBAQACAgIAAwMDAAREREAFhYWABwcHAAiIiIAKSkpAFVVVQBNTU0AQkJCADk5OQCAfP8AUFD/AJMA1gD/7MwAxtbvANbn5wCQqa0AAAAzAAAAZgAAAJkAAADMAAAzAAAAMzMAADNmAAAzmQAAM8wAADP/AABmAAAAZjMAAGZmAABmmQAAZswAAGb/AACZAAAAmTMAAJlmAACZmQAAmcwAAJn/AADMAAAAzDMAAMxmAADMmQAAzMwAAMz/AAD/ZgAA/5kAAP/MADMAAAAzADMAMwBmADMAmQAzAMwAMwD/ADMzAAAzMzMAMzNmADMzmQAzM8wAMzP/ADNmAAAzZjMAM2ZmADNmmQAzZswAM2b/ADOZAAAzmTMAM5lmADOZmQAzmcwAM5n/ADPMAAAzzDMAM8xmADPMmQAzzMwAM8z/ADP/MwAz/2YAM/+ZADP/zAAz//8AZgAAAGYAMwBmAGYAZgCZAGYAzABmAP8AZjMAAGYzMwBmM2YAZjOZAGYzzABmM/8AZmYAAGZmMwBmZmYAZmaZAGZmzABmmQAAZpkzAGaZZgBmmZkAZpnMAGaZ/wBmzAAAZswzAGbMmQBmzMwAZsz/AGb/AABm/zMAZv+ZAGb/zADMAP8A/wDMAJmZAACZM5kAmQCZAJkAzACZAAAAmTMzAJkAZgCZM8wAmQD/AJlmAACZZjMAmTNmAJlmmQCZZswAmTP/AJmZMwCZmWYAmZmZAJmZzACZmf8AmcwAAJnMMwBmzGYAmcyZAJnMzACZzP8Amf8AAJn/MwCZzGYAmf+ZAJn/zACZ//8AzAAAAJkAMwDMAGYAzACZAMwAzACZMwAAzDMzAMwzZgDMM5kAzDPMAMwz/wDMZgAAzGYzAJlmZgDMZpkAzGbMAJlm/wDMmQAAzJkzAMyZZgDMmZkAzJnMAMyZ/wDMzAAAzMwzAMzMZgDMzJkAzMzMAMzM/wDM/wAAzP8zAJn/ZgDM/5kAzP/MAMz//wDMADMA/wBmAP8AmQDMMwAA/zMzAP8zZgD/M5kA/zPMAP8z/wD/ZgAA/2YzAMxmZgD/ZpkA/2bMAMxm/wD/mQAA/5kzAP+ZZgD/mZkA/5nMAP+Z/wD/zAAA/8wzAP/MZgD/zJkA/8zMAP/M/wD//zMAzP9mAP//mQD//8wAZmb/AGb/ZgBm//8A/2ZmAP9m/wD//2YAIQClAF9fXwB3d3cAhoaGAJaWlgDLy8sAsrKyANfX1wDd3d0A4+PjAOrq6gDx8fEA+Pj4APD7/wCkoKAAgICAAAAA/wAA/wAAAP//AP8AAAD/AP8A//8AAP///wAKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgr//////////////////////////////////////////woKCgoKCgoKCgoKCgoKCgr//////////////////////////////////////////woKCgoKCgoKCgoKCgoKCgr//////////////////////////////////////////woKCgoKCgoKCgoKCgoKCgr//////////////////////////////////////////woKCgoKCgoKCgoKCgoKCgr//////////////////////////////////////////woKCgoKCgoKCgoKCgoKCgr//////////////////////////////////////////woKCgoKCgoKCgoKCgoKCgr/////////CgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgr/////////Cv7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/goKCgoKCgoKCgr///////8K/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/goKCgoKCgoKCgr///////8K/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+CgoKCgoKCgoKCgr///////8K/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+CgoKCgoKCgoKCgr///////8K/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+CgoKCgoKCgoKCgr//////wr+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+CgoKCgoKCgoKCgr//////wr+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+CgoKCgoKCgoKCgr//////wr+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v4KCgoKCgoKCgoKCgr//////wr+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v4KCgoKCgoKCgoKCgr/////Cv7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v4KCgoKCgoKCgoKCgr/////Cv7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v4KCgoKCgoKCgoKCgr/////Cv7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v4KCgoKCgoKCgoKCgr/////Cv7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/goKCgoKCgoKCgoKCgr///8K/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/goKCgoKCgoKCgoKCgr///8K/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/goKCgoKCgoKCgoKCgr///8K/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/goKCgoKCgoKCgoKCgr//wr+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/goKCgoKCgoKCgoKCgr//wr+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+CgoKCgoKCgoKCgoKCgr//wr+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+CgoKCgoKCgoKCgoKCgr//wr+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+CgoKCgoKCgoKCgoKCgr/Cv7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+CgoKCgoKCgoKCgoKCgr/Cv7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+CgoKCgoKCgoKCgoKCgr/Cv7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v4KCgoKCgoKCgoKCgoKCgr/Cv7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v4KCgoKCgoKCgoKCgoKCgoK/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v4KCgoKCgoKCgoKCgoKCgoK/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v4KCgoKCgoKCgoKCgoKCgoK/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/goKCgoKCgoKCgoKCgoKCgoK/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/goKCgoKCgoKCgoKCgoKCgr+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/goKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgr///////8AAP///////wAA////////AAD///////8AAP///////wAA////////AAD4AAAAAf8AAPgAAAAB/wAA+AAAAAH/AAD4AAAAAf8AAPgAAAAB/wAA+AAAAAH/AAD4AAAAAf8AAPgAAAAABwAA+AAAAAAHAAD4AAAAAAcAAPgAAAAADwAA+AAAAAAPAAD4AAAAAA8AAPgAAAAADwAA+AAAAAAPAAD4AAAAAB8AAPgAAAAAHwAA+AAAAAAfAAD4AAAAAB8AAPgAAAAAHwAA+AAAAAA/AAD4AAAAAD8AAPgAAAAAPwAA+AAAAAA/AAD4AAAAAD8AAPgAAAAAfwAA+AAAAAB/AAD4AAAAAH8AAPgAAAAAfwAA+AAAAAB/AAD4AAAAAP8AAPgAAAAA/wAA+AAAAAD/AAD4AAAAAP8AAPgAAAAA/wAA+AAAAAH/AAD4AAAAAf8AAPgAAAAB/wAA////////AAD///////8AAP///////wAA////////AAAoAAAAEAAAACAAAAABAAQAAAAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAgAAAAICAAIAAAACAAIAAgIAAAMDAwACAgIAAAAD/AAD/AAAA//8A/wAAAP8A/wD//wAA////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/////wAAAA/wAAAAAAAAD/Du7u7uAAAPDu7u7u4AAA8O7u7u4AAADw7u7u7gAAAPDu7u7uAAAADu7u7uAAAAAO7u7u4AAAAA7u7u7gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//8AAP//AADABwAAwAcAAMABAADAAQAAwAEAAMADAADAAwAAwAMAAMADAADABwAAwAcAAMAHAAD//wAA//8AAA==";
+    private final String iconBase64 = "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAABnRSTlMA/wAAAACkwsAdAAAAfElEQVRIid1WQQrAMAhbRv//5ey20SqFYhRmToWi0URQ8MrFnZw/n2C8LyjSWcHH/B9zBE6RxR54JRzBxks78BT+/5hOBCSjNpBLfDOJKgjkNvSTqIJAa0NLiSoIhDYULn0H4QW3I+D5AQDAxnSdIiE+1ZIuO8cWLdIlegBP3iE9QbJRkQAAAABJRU5ErkJggg==";
 
     // 搜索对话框的参数记忆功能
     private boolean isSearchCaseSensitive = false;
@@ -68,7 +68,7 @@ public class Notepad extends JFrame {
 
     private FindDialog findDialog;
 
-    private Font currentFont = new Font("微软雅黑", Font.PLAIN, 16);
+    private Font currentFont = new Font("微软雅黑", Font.PLAIN, 12);
     private PageFormat pageFormat = PrinterJob.getPrinterJob().defaultPage();
 
     private final ActionListener unimplementedListener = e -> {
@@ -540,6 +540,15 @@ public class Notepad extends JFrame {
     }
 
     /**
+     * 将文件拖放到本程序文件时的操作
+     * @param filePath 文件绝对路径
+     */
+    public Notepad(String filePath) {
+        this();
+        openFileByAbsolutePath(filePath);
+    }
+
+    /**
      * 删除选中的文本
      */
     private void delete() {
@@ -1008,7 +1017,7 @@ public class Notepad extends JFrame {
 
     // 显示关于信息
     private void showAbout() {
-        JOptionPane.showMessageDialog(this, "版本：6.0\n作者：你", "关于记事本", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, "版本：6.1\n作者：你", "关于记事本", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void toggleRightToLeft() {
@@ -1050,10 +1059,7 @@ public class Notepad extends JFrame {
 
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            Notepad notepad = new Notepad();
-            notepad.setVisible(true);
-        });
+        SwingUtilities.invokeLater(() -> (args.length > 0 ? new Notepad(args[0]) : new Notepad()).setVisible(true));
     }
 
     class FindDialog extends JDialog {
